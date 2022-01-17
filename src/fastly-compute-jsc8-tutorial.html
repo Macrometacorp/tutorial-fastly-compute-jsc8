@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>Fastly Compute@Edge with Macrometa JSC8</title>
+        <link
+            rel="icon"
+            href="https://macrometacorp.github.io/demo-fastly-jsc8-realtime-logs/favicon.png"
+            type="image/png"
+        />
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous"
+        />
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+            integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+            crossorigin="anonymous"
+        />
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"
+        ></script>
+    </head>
+    <body>
+        <style>
+            .action-btn {
+                background-color: #6767e6;
+                color: #fff;
+            }
+
+            .action-btn:hover {
+                background-color: #4d4dad;
+                color: #fff;
+            }
+
+            .toast-msg {
+                z-index: 99;
+                position: fixed;
+                right: 2%;
+                bottom: 2%;
+            }
+        </style>
+
+        <!-- Success/Error toast -->
+        <div
+            id="notificationToast"
+            class="toast align-items-center text-white border-0 toast-msg"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+        >
+            <div class="d-flex">
+                <div id="toastMessage" class="toast-body">Hello, world! This is a toast message.</div>
+                <button
+                    type="button"
+                    class="btn-close btn-close-white me-2 m-auto"
+                    data-bs-dismiss="toast"
+                    aria-label="Close"
+                ></button>
+            </div>
+        </div>
+
+        <!-- GDN Creds Modal -->
+        <div
+            class="modal fade"
+            id="loginModal"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="loginModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="loginModalLabel">Please login to your Macrometa account:</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form novalidate>
+                            <div class="form-floating pb-2">
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="username"
+                                    placeholder="name@example.com"
+                                    required
+                                />
+                                <label for="username">Email address</label>
+                            </div>
+                            <div class="form-floating pb-2">
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="password"
+                                    placeholder="Password"
+                                    required
+                                />
+                                <label for="password">Password</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="fabric" value="_system" />
+                                <label for="fabric">Fabric Name</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" onclick="submitGdnCredentials()">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-light bg-light" style="border-bottom: 1px solid rgba(197, 200, 209, 0.5)">
+            <div class="container justify-content-start">
+                <a class="navbar-brand" href="#">
+                    <img
+                        src="data:image/png;base64,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"
+                        alt=""
+                        width="128"
+                        height="32"
+                    />
+                </a>
+                <span class="navbar-text pt-2 pb-0"
+                    >Fastly Compute@Egde JS with Macrometa GDN using Macrometa JSC8 Driver
+                </span>
+            </div>
+        </nav>
+
+        <div class="container" style="margin-top: 1rem">
+            <div style="display: flex; margin-bottom: 2rem; align-items: baseline">
+                <div>Collection: fastly_compute_tutorial</div>
+
+                <button type="button" class="btn action-btn" onclick="createCollection()" style="margin-left: 1rem">
+                    Create Collection
+                </button>
+                <button type="button" class="btn action-btn" onclick="addDocument()" style="margin-left: 1rem">
+                    Add Doccument
+                </button>
+            </div>
+            <div class="table-responsive w-75" style="margin-bottom: 1rem">
+                <table id="collectionContent" class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">_key</th>
+                            <th scope="col">Content</th>
+                            <th scope="col" class="text-end"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="noData">
+                            <td></td>
+                            <td>No Data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            let collectionName = "fastly_compute_tutorial"
+            const API_PATH = {
+                CREATE_COLLECTION: "/collection",
+                GET_DOCUMENTS: "/getAllDocuments",
+                INSERT_DOCUMENT: "/insertDocument",
+                DELETE_DOCUMENT: "/deleteDocument",
+            }
+            const gdnCredentials = {
+                username: "",
+                password: "",
+                fabric: "_system",
+            }
+            let toastClass = "toast align-items-center text-white border-0 toast-msg"
+
+            const collectionContentTable = document.getElementById("collectionContent")
+            const toastMessage = document.getElementById("toastMessage")
+            const notificationToast = new bootstrap.Toast(document.getElementById("notificationToast"))
+
+            const loginModal = new bootstrap.Modal(document.getElementById("loginModal"))
+            loginModal.show()
+
+            const apiRequest = async (requestPath, requestBody, successMessage) => {
+                return fetch(requestPath, {
+                    method: "post",
+                    body: JSON.stringify(requestBody),
+                })
+                    .then(async (response) => {
+                        let message = successMessage
+                        let toastCssClass = `${toastClass} bg-success`
+
+                        if (response.status !== 200) {
+                            toastCssClass = `${toastClass} bg-danger`
+                            message = await response.text()
+                        }
+
+                        notificationToast._element.className = toastCssClass
+                        toastMessage.innerHTML = message
+                        successMessage && notificationToast.show()
+                        return response
+                    })
+                    .catch((error) => console.error(error))
+            }
+
+            const removeNoData = () => {
+                const noData = document.getElementById("noData")
+                if (noData) {
+                    collectionContentTable.deleteRow(noData.rowIndex)
+                }
+            }
+
+            const insertContentRow = (key, content) => {
+                const newData = collectionContentTable.insertRow(1)
+                const keyCell = newData.insertCell(0)
+                const contentCell = newData.insertCell(1)
+                const removeDoccumentBtnCell = newData.insertCell(2)
+
+                newData.id = key
+                keyCell.innerHTML = key
+                contentCell.innerHTML = JSON.stringify(content)
+                removeDoccumentBtnCell.className = "text-end"
+                removeDoccumentBtnCell.innerHTML = `<i class="fa fa-minus-circle text-danger fs-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Remove Doccument" onclick="removeDoccument(${key})"></i>`
+            }
+
+            const submitGdnCredentials = () => {
+                gdnCredentials.username = (document.getElementById("username").value || "").trim()
+                gdnCredentials.password = (document.getElementById("password").value || "").trim()
+                gdnCredentials.fabric = (document.getElementById("fabric").value || "_system").trim()
+
+                if (gdnCredentials.username && gdnCredentials.password) {
+                    loginModal.hide()
+                    getDocuments()
+                }
+            }
+
+            const createCollection = async () => {
+                const requestBody = {
+                    ...gdnCredentials,
+                    collectionName,
+                }
+
+                await apiRequest(API_PATH.CREATE_COLLECTION, requestBody, "Collection created successfully.")
+            }
+
+            const addDocument = async () => {
+                const content = {
+                    document_insert_time: new Date().getTime(),
+                }
+                const requestBody = {
+                    ...gdnCredentials,
+                    collectionName,
+                    content,
+                }
+
+                const response = await apiRequest(
+                    API_PATH.INSERT_DOCUMENT,
+                    requestBody,
+                    "Document inserted successfully.",
+                )
+
+                removeNoData()
+                const { _key } = await response.json()
+                insertContentRow(_key, content)
+            }
+
+            const removeDoccument = async (rowId) => {
+                const row = document.getElementById(rowId)
+                const requestBody = {
+                    ...gdnCredentials,
+                    collectionName,
+                    key: rowId.toString(),
+                }
+
+                const response = await apiRequest(
+                    API_PATH.DELETE_DOCUMENT,
+                    requestBody,
+                    "Document deleted successfully.",
+                )
+                collectionContentTable.deleteRow(row.rowIndex)
+            }
+
+            const getDocuments = async () => {
+                const requestBody = {
+                    ...gdnCredentials,
+                    collectionName,
+                }
+
+                const response = await apiRequest(API_PATH.GET_DOCUMENTS, requestBody, "")
+                const data = await response.json()
+
+                if (data.length) removeNoData()
+                data.forEach((element) => {
+                    insertContentRow(element._key, { document_insert_time: element.document_insert_time })
+                })
+            }
+        </script>
+    </body>
+</html>
