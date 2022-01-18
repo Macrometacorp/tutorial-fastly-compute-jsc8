@@ -4,7 +4,7 @@ let jsc8Client
 
 const initClient = (fabricName) => {
     jsc8Client = new jsC8({
-        url: "https://tushar.eng.macrometa.io",
+        url: "https://gdn.paas.macrometa.io",
         fabricName,
         agent: fetch,
         agentOptions: {
