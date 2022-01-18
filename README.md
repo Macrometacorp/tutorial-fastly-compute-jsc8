@@ -1,12 +1,12 @@
 # Macrometa JSC8 driver on Fastly Compute@Edge
 
-This tutorial will demonstrate how you can use jsc8 driver with Fastly Compute edge
+This tutorial will demonstrate CRUD operation on GDN Collection using a jsc8 driver with Fastly Compute edge.
 
-**Note**: Fastly Compute@Edge does not support websocket connection so you will not be able use JSC8 features such connecting to stream/collection streams.
+**Note**: Fastly Compute@Edge does not support websocket connection so you will not be able use JSC8 features such connecting to stream/collection streams
 
 ## Prerequisite
 
-1. Create API token by following [Fastly creating api tokens doc](https://docs.fastly.com/en/guides/using-api-tokens#creating-api-tokens). The generated token will be used to configure Fastly CLI. **Create Token with `Global API access` Scope.**
+1. Create API token by following [Fastly creating api tokens doc](https://docs.fastly.com/en/guides/using-api-tokens#creating-api-tokens). The generated token will be used to configure Fastly CLI. **Create Token with `Global API access` Scope**
 2. To install and configure Fastly CLI follow [Fastly CLI Doc](https://developer.fastly.com/reference/cli/)
 3. Create Fastly Compute@Edge service
     > ```
@@ -28,7 +28,8 @@ This tutorial will demonstrate how you can use jsc8 driver with Fastly Compute e
 > npm install
 > npm run dev
 > npm run deploy
-> Once you deploy the service fastly will create domain for your service and it will be in out of above command under `View this service at:`
+> Once you deploy the service fastly will create domain for your service and
+> it will be in out of above command under `View this service at:`
 > ```
 
 ## Prerequisite for using JSC8 with Fastly Compute@Edge
@@ -79,9 +80,9 @@ This tutorial will demonstrate how you can use jsc8 driver with Fastly Compute e
     >
     > For authentication, this tutorial uses JSC8 client's login method for but you can provide API key generated using Macrometa GDN GUI as show above.
 
-    **Note: Please note the passing `backend` paramerter in `agentOptions` is required. Value of `backend` will be your server backend name(line 3) in above section point 3.**
+    **Note: Please note the passing `backend` paramerter in `agentOptions` is required. Value of `backend` will be your server backend name(line 3) in above section point 3**
 
-2. Once you have created the jsC8 client, you will be able to use all the methods which will enable you read, write, manipulate data in Macrometa GDN.
+2. Once you have created the jsC8 client, you will be able to use all the methods which will enable you read, write, manipulate data in Macrometa GDN
     > Sample
     >
     > ```
