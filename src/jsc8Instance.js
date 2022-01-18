@@ -9,6 +9,7 @@ const initClient = (fabricName) => {
         agent: fetch,
         agentOptions: {
             backend: "gdn_url",
+            cacheOverride: new CacheOverride("override", { ttl: 0 }),
         },
     })
 }
