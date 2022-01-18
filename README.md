@@ -2,7 +2,7 @@
 
 This tutorial will demonstrate CRUD operation on GDN Collection using a jsc8 driver with Fastly Compute edge.
 
-### Known limitations and issues
+### Known limitations
 
 -   Fastly Compute@Edge does not support WebSocket connection so you will not be able to use JSC8 producer/subscriber features for stream/collection streams
 -   Requests forwarded to a backend will transit the Fastly cache, and the response may come from cache. Where a request doesn't find a matching result in cache, it will be sent to the backend(Macrometa GDN). As of now, Fastly only allow you to set `CacheOverride` parameter to handle caching so if you want to clear cache you can follow [Fastly's Purge Cache doc](https://docs.fastly.com/en/guides/purging-all-content)
