@@ -1,7 +1,7 @@
 # This file describes a Fastly Compute@Edge package. To learn more visit:
 # https://developer.fastly.com/reference/fastly-toml/
 
-authors = ["macrometa"]
+authors = ["Macrometa Inc."]
 description = "Macrometa jsc8 driver with Fastly Compute@Edge."
 language = "javascript"
 manifest_version = 2

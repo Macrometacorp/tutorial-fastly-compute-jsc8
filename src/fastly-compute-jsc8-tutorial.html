@@ -141,7 +141,7 @@
                     Create Collection
                 </button>
                 <button type="button" class="btn action-btn" onclick="addDocument()" style="margin-left: 1rem">
-                    Add Doccument
+                    Add Document
                 </button>
             </div>
             <div class="table-responsive w-75" style="margin-bottom: 1rem">
@@ -217,13 +217,13 @@
                 const newData = collectionContentTable.insertRow(1)
                 const keyCell = newData.insertCell(0)
                 const contentCell = newData.insertCell(1)
-                const removeDoccumentBtnCell = newData.insertCell(2)
+                const removeDocumentBtnCell = newData.insertCell(2)
 
                 newData.id = key
                 keyCell.innerHTML = key
                 contentCell.innerHTML = JSON.stringify(content)
-                removeDoccumentBtnCell.className = "text-end"
-                removeDoccumentBtnCell.innerHTML = `<i class="fa fa-minus-circle text-danger fs-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Remove Doccument" onclick="removeDoccument(${key})"></i>`
+                removeDocumentBtnCell.className = "text-end"
+                removeDocumentBtnCell.innerHTML = `<i class="fa fa-minus-circle text-danger fs-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Remove Document" onclick="removeDocument(${key})"></i>`
             }
 
             const submitGdnCredentials = () => {
@@ -267,7 +267,7 @@
                 insertContentRow(_key, content)
             }
 
-            const removeDoccument = async (rowId) => {
+            const removeDocument = async (rowId) => {
                 const row = document.getElementById(rowId)
                 const requestBody = {
                     ...gdnCredentials,
